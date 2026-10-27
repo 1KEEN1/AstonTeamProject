@@ -45,6 +45,19 @@ public class User {
                 '}';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return age == user.age && Objects.equals(name, user.name) && Objects.equals(password, user.password) && Objects.equals(mail, user.mail);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, password, mail, age);
+    }
+
     private static String checkIfNonBlank(String value, String field) {
         Objects.requireNonNull(value, field + "is required");
         if (value.isBlank()) {
