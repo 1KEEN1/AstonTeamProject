@@ -23,12 +23,6 @@ class SimpleArrayListTest {
     }
 
     @Test
-    void checkIterator() {
-        assertThat(list.size()).isEqualTo(3);
-        assertThat(list).hasSize(3);
-    }
-
-    @Test
     void whenAddThenSizeIncrease() {
         list.add(4);
         assertThat(list.size()).isEqualTo(4);
@@ -60,7 +54,7 @@ class SimpleArrayListTest {
     }
 
     @Test
-    void whenAndAndGetByIncorrectIndexThenGetException() {
+    void whenGetByIndexLessThanCapacityButGreaterThanSizeThenException() {
         SimpleList<Integer> list = new SimpleArrayList<>(10);
         list.add(5);
         assertThatThrownBy(() -> list.get(5))
@@ -74,13 +68,41 @@ class SimpleArrayListTest {
     }
 
     @Test
-    void whenAddNullThenMustBeSameBehavior() {
+    void whenAddNullThenItIsStored() {
         list = new SimpleArrayList<>(3);
         list.add(null);
         list.add(null);
         assertThat(list.size()).isEqualTo(2);
         assertThat(list.get(0)).isNull();
         assertThat(list.get(1)).isNull();
+        Iterator<Integer> it = list.iterator();
+        assertThat(it.next()).isNull();
+        assertThat(it.next()).isNull();
+        assertThat(it.hasNext()).isFalse();
+    }
+
+    @Test
+    void whenRemoveFirstThenShiftLeft() {
+        assertThat(list.remove(0)).isEqualTo(1);
+        assertThat(list).hasSize(2);
+        assertThat(list.get(0)).isEqualTo(2);
+        assertThat(list.get(1)).isEqualTo(3);
+    }
+
+    @Test
+    void whenRemoveLastThenNoShift() {
+        assertThat(list.remove(2)).isEqualTo(3);
+        assertThat(list).hasSize(2);
+        assertThat(list.get(0)).isEqualTo(1);
+        assertThat(list.get(1)).isEqualTo(2);
+    }
+
+    @Test
+    void whenCapacityIsZeroThenAddWorks() {
+        SimpleList<Integer> list = new SimpleArrayList<>(0);
+        list.add(42);
+        assertThat(list.size()).isEqualTo(1);
+        assertThat(list.get(0)).isEqualTo(42);
     }
 
     @Test
@@ -90,9 +112,24 @@ class SimpleArrayListTest {
     }
 
     @Test
+    void whenNegativeCapacityThenException() {
+        assertThatThrownBy(() -> new SimpleArrayList<Integer>(-1))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
     void whenSetByIncorrectIndexThenGetException() {
         assertThatThrownBy(() -> list.set(5, 22))
                 .isInstanceOf(IndexOutOfBoundsException.class);
+    }
+
+    @Test
+    void whenRemoveThenIteratorDoesNotSkipOrThrow() {
+        list.remove(0);              // size = 2, modCount = 4
+        Iterator<Integer> it = list.iterator();
+        assertThat(it.next()).isEqualTo(2);
+        assertThat(it.next()).isEqualTo(3);
+        assertThat(it.hasNext()).isFalse();
     }
 
     @Test
@@ -106,6 +143,16 @@ class SimpleArrayListTest {
         list = new SimpleArrayList<>(5);
         assertThatThrownBy(list.iterator()::next)
                 .isInstanceOf(NoSuchElementException.class);
+    }
+
+    @Test
+    void whenRemoveAllThenListIsEmptyAndCanBeReused() {
+        list.remove(0);
+        list.remove(0);
+        list.remove(0);
+        assertThat(list).isEmpty();
+        list.add(99);
+        assertThat(list).containsExactly(99);
     }
 
     @Test
@@ -127,10 +174,10 @@ class SimpleArrayListTest {
     }
 
     @Test
-    void whenNoPlaceThenMustIncreaseCapacity() {
-        assertThat(list.size()).isEqualTo(3);
-        IntStream.range(3, 10).forEach(v -> list.add(v));
-        assertThat(list.size()).isEqualTo(10);
+    void whenNoPlaceThenMustIncreaseCapacityAndKeepElements() {
+        IntStream.range(4, 10).forEach(list::add);
+        assertThat(list.size()).isEqualTo(9);
+        assertThat(list).containsExactly(1, 2, 3, 4, 5, 6, 7, 8, 9);
     }
 
     @Test
@@ -150,9 +197,20 @@ class SimpleArrayListTest {
     }
 
     @Test
-    void whenSetAfterGetIteratorThenMustBeOk() {
-        Iterator<Integer> iterator = list.iterator();
-        list.set(0, 22);
-        assertThat(iterator.next()).isEqualTo(22);
+    void whenSetAfterGetIteratorThenNoCME() {
+        Iterator<Integer> it = list.iterator();
+        it.next();                    // 1
+        list.set(1, 22);              // не структурная модификация
+        assertThat(it.next()).isEqualTo(22);
+        assertThat(it.next()).isEqualTo(3);
+        assertThat(it.hasNext()).isFalse();
+    }
+
+    @Test
+    void whenNextAfterLastThenException() {
+        Iterator<Integer> it = list.iterator();
+        it.next(); it.next(); it.next();
+        assertThatThrownBy(it::next)
+                .isInstanceOf(NoSuchElementException.class);
     }
 }

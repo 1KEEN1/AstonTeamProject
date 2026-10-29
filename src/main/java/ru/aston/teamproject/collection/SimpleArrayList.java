@@ -8,7 +8,9 @@ public class SimpleArrayList<T> implements SimpleList<T> {
     private int size;
     private int modCount;
 
+    @SuppressWarnings("unchecked")
     public SimpleArrayList(int capacity) {
+        if (capacity < 0) throw new IllegalArgumentException("capacity: " + capacity);
         this.container = (T[]) new Object[capacity];
     }
 
@@ -17,7 +19,6 @@ public class SimpleArrayList<T> implements SimpleList<T> {
         expandList();
         container[size++] = value;
         modCount++;
-
     }
 
     @Override
@@ -49,8 +50,9 @@ public class SimpleArrayList<T> implements SimpleList<T> {
     }
 
     private void expandList() {
-        if (size >= container.length - 1) {
-            container = Arrays.copyOf(container, container.length * 2 + 1);
+        if (size == container.length) {
+            int newCapacity = container.length == 0 ? 1 : container.length * 2;
+            container = Arrays.copyOf(container, newCapacity);
         }
     }
 
@@ -60,23 +62,25 @@ public class SimpleArrayList<T> implements SimpleList<T> {
             private int index = 0;
             private int tempMod = modCount;
 
-            @Override
-            public boolean hasNext() {
+            private void checkForComodification() {
                 if (tempMod != modCount) {
                     throw new ConcurrentModificationException();
                 }
-                return index < modCount;
+            }
+
+            @Override
+            public boolean hasNext() {
+                return index < size;
             }
 
             @Override
             public T next() {
-                if (!hasNext()) {
+                checkForComodification();
+                if (index >= size) {
                     throw new NoSuchElementException();
                 }
                 return container[index++];
-
             }
-
         };
     }
 }
