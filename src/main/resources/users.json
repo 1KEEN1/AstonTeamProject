@@ -1,0 +1,92 @@
+[
+  {
+    "name": "Ivan",
+    "password": "Ivan12345",
+    "mail": "ivan@example.com",
+    "age": 25
+  },
+  {
+    "name": "Anna",
+    "password": "Anna12345",
+    "mail": "anna@example.com",
+    "age": 22
+  },
+  {
+    "name": "Petr",
+    "password": "Petr12345",
+    "mail": "petr@example.com",
+    "age": 30
+  },
+  {
+    "name": "Maria",
+    "password": "Maria12345",
+    "mail": "maria@example.com",
+    "age": 28
+  },
+  {
+    "name": "Alexey",
+    "password": "Alexey12345",
+    "mail": "alexey@example.com",
+    "age": 35
+  },
+  {
+    "name": "Olga",
+    "password": "Olga12345",
+    "mail": "olga@example.com",
+    "age": 19
+  },
+  {
+    "name": "Dmitry",
+    "password": "Dmitry12345",
+    "mail": "dmitry@example.com",
+    "age": 42
+  },
+  {
+    "name": "Elena",
+    "password": "Elena12345",
+    "mail": "elena@example.com",
+    "age": 31
+  },
+  {
+    "name": "Sergey",
+    "password": "Sergey12345",
+    "mail": "sergey@example.com",
+    "age": 27
+  },
+  {
+    "name": "Natalia",
+    "password": "Natalia12345",
+    "mail": "natalia@example.com",
+    "age": 45
+  },
+  {
+    "name": "Andrey",
+    "password": "Andrey12345",
+    "mail": "andrey@example.com",
+    "age": 23
+  },
+  {
+    "name": "Victoria",
+    "password": "Victoria12345",
+    "mail": "victoria@example.com",
+    "age": 38
+  },
+  {
+    "name": "Mikhail",
+    "password": "Mikhail12345",
+    "mail": "mikhail@example.com",
+    "age": 51
+  },
+  {
+    "name": "Svetlana",
+    "password": "Svetlana12345",
+    "mail": "svetlana@example.com",
+    "age": 33
+  },
+  {
+    "name": "Daler",
+    "password": "Daler12345",
+    "mail": "daler@example.com",
+    "age": 26
+  }
+]
