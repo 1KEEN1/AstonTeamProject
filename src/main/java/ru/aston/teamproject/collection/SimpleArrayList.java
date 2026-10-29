@@ -1,9 +1,12 @@
 package ru.aston.teamproject.collection;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.ConcurrentModificationException;
+import java.util.NoSuchElementException;
+import java.util.Iterator;
+import java.util.Objects;
 
 public class SimpleArrayList<T> implements SimpleList<T> {
-
     private T[] container;
     private int size;
     private int modCount;
