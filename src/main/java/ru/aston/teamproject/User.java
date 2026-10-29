@@ -59,7 +59,7 @@ public class User {
     }
 
     private static String checkIfNonBlank(String value, String field) {
-        Objects.requireNonNull(value, field + "is required");
+        Objects.requireNonNull(value, field + " is required");
         if (value.isBlank()) {
             throw new IllegalArgumentException(field + " must not be blank");
         }
