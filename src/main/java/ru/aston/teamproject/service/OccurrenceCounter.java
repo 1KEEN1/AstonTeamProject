@@ -1,6 +1,6 @@
 package ru.aston.teamproject.service;
 
-import ru.aston.teamproject.User;
+import ru.aston.teamproject.user.User;
 import ru.aston.teamproject.collection.SimpleList;
 
 import java.util.ArrayList;

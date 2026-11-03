@@ -1,7 +1,7 @@
 package ru.aston.teamproject.customsort;
 
 import ru.aston.teamproject.collection.SimpleArrayList;
-import ru.aston.teamproject.User;
+import ru.aston.teamproject.user.User;
 
 import java.util.Comparator;
 
