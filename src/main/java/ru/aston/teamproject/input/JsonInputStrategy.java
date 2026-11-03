@@ -1,4 +1,6 @@
 package ru.aston.teamproject.input;
+import ru.aston.teamproject.collection.SimpleArrayList;
+import ru.aston.teamproject.collection.SimpleList;
 import ru.aston.teamproject.factory.DataFactory;
 import ru.aston.teamproject.validation.InputValidator;
 
@@ -6,10 +8,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -25,7 +25,7 @@ public class JsonInputStrategy<T> implements DataInputStrategy<T> {
     }
 
     @Override
-    public List<T> read(int count) {
+    public SimpleList<T> read(int count) {
         InputValidator.nonNegativeCount(count);
         JsonNode root;
         try {
@@ -36,10 +36,12 @@ public class JsonInputStrategy<T> implements DataInputStrategy<T> {
         if (root == null || !root.isArray()) {
             throw new IllegalArgumentException("Корень JSON должен быть массивом объектов");
         }
-        if (root.size() < count) {
-            throw new IllegalArgumentException("В JSON только " + root.size() + " записей, требуется " + count);
+        try {
+            InputValidator.validateAvailableSpace(count, root.size());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("В JSON только " + root.size() + " записей, требуется " + count, e);
         }
-        List<T> result = new ArrayList<>(count);
+        SimpleList<T> result = new SimpleArrayList<>(count);
         Set<String> allowed = new HashSet<>(factory.fieldNames());
         for (int i = 0; i < count; i++) {
             JsonNode node = root.get(i);

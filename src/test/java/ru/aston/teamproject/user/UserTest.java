@@ -1,6 +1,7 @@
 package ru.aston.teamproject.user;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -12,6 +13,7 @@ public class UserTest {
     @Nested
     class ValidationTests {
         @Test
+        @DisplayName("Создание пользователя с null в name невозможно")
         void whenCreateUserWithNullName_thenThrowNPE() {
             assertThrows(NullPointerException.class,
                     () -> User.builder()
@@ -23,6 +25,7 @@ public class UserTest {
         }
 
         @Test
+        @DisplayName("Создание пользователя с null в password невозможно")
         void whenCreateUserWithNullPassword_thenThrowNPE() {
             assertThrows(NullPointerException.class,
                     () -> User.builder()
@@ -34,6 +37,7 @@ public class UserTest {
         }
 
         @Test
+        @DisplayName("Создание пользователя с null в mail невозможно")
         void whenCreateUserWithNullMail_thenThrowNPE() {
             assertThrows(NullPointerException.class,
                     () -> User.builder()
@@ -45,6 +49,7 @@ public class UserTest {
         }
 
         @Test
+        @DisplayName("Создание пользователя с пустым name невозможно")
         void whenCreateUserWithEmptyName_thenThrowIllegalArgumentException() {
             assertThrows(IllegalArgumentException.class,
                     () -> User.builder()
@@ -56,6 +61,7 @@ public class UserTest {
         }
 
         @Test
+        @DisplayName("Создание пользователя с пробелом в name невозможно")
         void whenCreateUserWithBlankName_thenThrowIllegalArgumentException() {
             assertThrows(IllegalArgumentException.class,
                     () -> User.builder()
@@ -67,6 +73,7 @@ public class UserTest {
         }
 
         @Test
+        @DisplayName("Создание пользователя с пустым password невозможно")
         void whenCreateUserWithEmptyPassword_thenThrowIllegalArgumentException() {
             assertThrows(IllegalArgumentException.class,
                     () -> User.builder()
@@ -78,6 +85,7 @@ public class UserTest {
         }
 
         @Test
+        @DisplayName("Создание пользователя с пробелом в password невозможно")
         void whenCreateUserWithBlankPassword_thenThrowIllegalArgumentException() {
             assertThrows(IllegalArgumentException.class,
                     () -> User.builder()
@@ -89,6 +97,7 @@ public class UserTest {
         }
 
         @Test
+        @DisplayName("Создание пользователя с пустым mail невозможно")
         void whenCreateUserWithEmptyMail_thenThrowIllegalArgumentException() {
             assertThrows(IllegalArgumentException.class,
                     () -> User.builder()
@@ -100,6 +109,7 @@ public class UserTest {
         }
 
         @Test
+        @DisplayName("Создание пользователя с пробелом в mail невозможно")
         void whenCreateUserWithBlankMail_thenThrowIllegalArgumentException() {
             assertThrows(IllegalArgumentException.class,
                     () -> User.builder()
@@ -111,6 +121,7 @@ public class UserTest {
         }
 
         @Test
+        @DisplayName("Создание пользователя с 0 age невозможно")
         void whenCreateUserWithZeroAge_thenThrowIllegalArgumentException(){
             assertThrows(IllegalArgumentException.class,
                     () -> User.builder()
@@ -122,6 +133,7 @@ public class UserTest {
         }
 
         @Test
+        @DisplayName("Создание пользователя с отрицательным age невозможно")
         void whenCreateUserWithNegativeAge_thenThrowIllegalArgumentException(){
             assertThrows(IllegalArgumentException.class,
                     () -> User.builder()
@@ -136,6 +148,7 @@ public class UserTest {
     @Nested
     class BuilderTests{
         @Test
+        @DisplayName("Создание пользователя с валидными данными не должно вызывать ошибок")
         void whenCreateUserWithValidData_thenUserIsCreated() {
             String name = "Anna";
             String password = "12345";
@@ -157,6 +170,7 @@ public class UserTest {
         }
 
         @Test
+        @DisplayName("Создание пользователя без имени невозможно")
         void whenCreateUserWithoutName_thenUserNotCreated(){
             NullPointerException exception = assertThrows(NullPointerException.class,
                     ()-> User.builder()
@@ -169,6 +183,7 @@ public class UserTest {
         }
 
         @Test
+        @DisplayName("Создание пользователя без пароля невозможно")
         void whenCreateUserWithoutPassword_thenUserNotCreated(){
             NullPointerException exception = assertThrows(NullPointerException.class,
                     ()-> User.builder()
@@ -181,6 +196,7 @@ public class UserTest {
         }
 
         @Test
+        @DisplayName("Создание пользователя без электронного адреса невозможно")
         void whenCreateUserWithoutMail_thenUserNotCreated(){
             NullPointerException exception = assertThrows(NullPointerException.class,
                     ()-> User.builder()
@@ -193,6 +209,7 @@ public class UserTest {
         }
 
         @Test
+        @DisplayName("Создание пользователя без возраста невозможно")
         void whenCreateUserWithoutAge_thenUserNotCreated(){
             IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                     ()-> User.builder()
@@ -205,6 +222,7 @@ public class UserTest {
         }
 
         @Test
+        @DisplayName("Если пользователь был создан, у него можно вызвать toString")
         void whenUserIsCreated_thenToStringContainsAllFields() {
             User user = User.builder().name("Anna").password("12345").mail("anna@mail.ru").age(18).build();
 
@@ -230,6 +248,7 @@ public class UserTest {
                     .build();
         }
         @Test
+        @DisplayName("Два объекта класса User с одинаковыми полями должны быть равны")
         void whenUsersWithTheSameData_thenTheyEquals(){
             User user2 = User.builder()
                     .name("Anna")
@@ -242,6 +261,7 @@ public class UserTest {
         }
 
         @Test
+        @DisplayName("Два объекта класса User с разными полями name не должны быть равны")
         void whenUsersHaveDifferentNames_thenTheyNotEquals(){
             User user2 = User.builder()
                     .name("Nikolay")
@@ -254,6 +274,7 @@ public class UserTest {
         }
 
         @Test
+        @DisplayName("Два объекта класса User с разными полями password не должны быть равны")
         void whenUsersHaveDifferentPasswords_thenTheyNotEquals(){
             User user2 = User.builder()
                     .name("Anna")
@@ -266,6 +287,7 @@ public class UserTest {
         }
 
         @Test
+        @DisplayName("Два объекта класса User с разными полями mail не должны быть равны")
         void whenUsersHaveDifferentMail_thenTheyNotEquals(){
             User user2 = User.builder()
                     .name("Anna")
@@ -278,6 +300,7 @@ public class UserTest {
         }
 
         @Test
+        @DisplayName("Два объекта класса User с разными полями age не должны быть равны")
         void whenUsersHaveDifferentAge_thenTheyNotEquals(){
             User user2 = User.builder()
                     .name("Anna")
@@ -290,6 +313,7 @@ public class UserTest {
         }
 
         @Test
+        @DisplayName("Два одинаковых объекта класса User имеют одинаковые HashCode")
         void whenUsersEqual_thenTheyHaveSameHashCode(){
             User user2 = User.builder()
                     .name("Anna")
@@ -302,6 +326,7 @@ public class UserTest {
         }
 
         @Test
+        @DisplayName("Два разных объекта класса User имеют разные HashCode")
         void whenUsersNotEqual_thenTheyHaveDifferentHashCode(){
             User user2 = User.builder()
                     .name("Nikolay")
@@ -313,13 +338,14 @@ public class UserTest {
             assertNotEquals(user1.hashCode(), user2.hashCode());
         }
 
-
         @Test
+        @DisplayName("Сравнение с Null должно возвращать false")
         void whenUserCompareWithNull_thenFalse(){
             assertNotEquals(null, user1);
         }
 
         @Test
+        @DisplayName("Сравнение с другими типами должно возвращать false")
         void whenUserCompareWithOtherType_thenFalse() {
             assertNotEquals("Some string", user1);
         }

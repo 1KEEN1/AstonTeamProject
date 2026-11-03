@@ -1,7 +1,8 @@
 package ru.aston.teamproject.validation;
 
 public final class InputValidator {
-    private InputValidator() { }
+    private InputValidator() {
+    }
 
     public static String nonBlank(String value, String field) {
         if (value == null || value.isBlank()) {
@@ -29,10 +30,8 @@ public final class InputValidator {
         }
     }
 
-    public static void validateAvailableSpace(
-            int requestedCount,
-            int availableSpace
-    ) {
+
+    public static void validateAvailableSpace(int requestedCount, int availableSpace) {
         nonNegativeCount(requestedCount);
 
         if (availableSpace < 0) {

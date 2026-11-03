@@ -1,10 +1,10 @@
 package ru.aston.teamproject.input;
+import ru.aston.teamproject.collection.SimpleArrayList;
+import ru.aston.teamproject.collection.SimpleList;
 import ru.aston.teamproject.factory.DataFactory;
 import ru.aston.teamproject.validation.InputValidator;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -19,9 +19,9 @@ public class ManualInputStrategy<T> implements DataInputStrategy<T> {
     }
 
     @Override
-    public List<T> read(int count) {
+    public SimpleList<T> read(int count) {
         InputValidator.nonNegativeCount(count);
-        List<T> result = new ArrayList<>();
+        SimpleList<T> result = new SimpleArrayList<>(count);
         for (int i = 0; i < count; i++) {
             while (true) {
                 Map<String, String> fields = new LinkedHashMap<>();
