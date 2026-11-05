@@ -21,18 +21,18 @@ class OccurrenceCounterTest {
     }
 
     @Test
-    void whenEmptyCollectionThenZero() throws Exception {
+    void whenEmptyCollection_thenZero() throws Exception {
         assertThat(OccurrenceCounter.countByUser(users, anna, 4)).isZero();
     }
 
     @Test
-    void whenTargetAbsentThenZero() throws Exception {
+    void whenTargetAbsent_thenZero() throws Exception {
         users.add(User.builder().name("Boris").password("p2").mail("b@mail.com").age(30).build());
         assertThat(OccurrenceCounter.countByUser(users, anna, 2)).isZero();
     }
 
     @Test
-    void whenTargetPresentMultipleTimesThenCounted() throws Exception {
+    void whenTargetPresentMultipleTimes_thenCounted() throws Exception {
         users.add(anna);
         users.add(User.builder().name("Boris").password("p2").mail("b@mail.com").age(30).build());
         users.add(anna);
@@ -56,7 +56,7 @@ class OccurrenceCounterTest {
     }
 
     @Test
-    void whenNonPositiveThreadsThenException() {
+    void whenNonPositiveThreads_thenException() {
         assertThatThrownBy(() -> OccurrenceCounter.countByUser(users, anna, 0))
                 .isInstanceOf(IllegalArgumentException.class);
         assertThatThrownBy(() -> OccurrenceCounter.countByUser(users, anna, -1))

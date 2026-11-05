@@ -5,6 +5,7 @@ import ru.aston.teamproject.factory.DataFactory;
 import ru.aston.teamproject.validation.InputValidator;
 
 import java.util.Objects;
+import java.util.stream.Stream;
 
 public class RandomInputStrategy<T> implements DataInputStrategy<T> {
     private final DataFactory<T> factory;
@@ -17,9 +18,10 @@ public class RandomInputStrategy<T> implements DataInputStrategy<T> {
     public SimpleList<T> read(int count) {
         InputValidator.nonNegativeCount(count);
         SimpleList<T> result = new SimpleArrayList<>(count);
-        for (int i = 0; i < count; i++) {
-            result.add(Objects.requireNonNull(factory.random(), "Фабрика вернула null"));
-        }
+        Stream.generate(factory::random)
+                .limit(count)
+                .map(item -> Objects.requireNonNull(item, "Фабрика вернула null"))
+                .forEach(result::add);
         return result;
     }
 }
