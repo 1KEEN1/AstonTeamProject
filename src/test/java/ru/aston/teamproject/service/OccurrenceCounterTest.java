@@ -2,7 +2,7 @@ package ru.aston.teamproject.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.aston.teamproject.User;
+import ru.aston.teamproject.user.User;
 import ru.aston.teamproject.collection.SimpleArrayList;
 import ru.aston.teamproject.collection.SimpleList;
 

@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import ru.aston.teamproject.User;
+import ru.aston.teamproject.user.User;
 import ru.aston.teamproject.collection.SimpleArrayList;
 
 import java.time.Duration;

@@ -1,4 +1,4 @@
-package ru.aston.teamproject;
+package ru.aston.teamproject.user;
 
 import java.util.Objects;
 

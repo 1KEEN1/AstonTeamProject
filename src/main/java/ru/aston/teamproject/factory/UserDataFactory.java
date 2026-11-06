@@ -1,7 +1,7 @@
 package ru.aston.teamproject.factory;
 import ru.aston.teamproject.validation.InputValidator;
 
-import ru.aston.teamproject.User;
+import ru.aston.teamproject.user.User;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
