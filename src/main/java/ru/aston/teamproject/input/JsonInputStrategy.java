@@ -13,6 +13,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.IntStream;
 
 public class JsonInputStrategy<T> implements DataInputStrategy<T> {
     private final Path file;
@@ -41,34 +43,43 @@ public class JsonInputStrategy<T> implements DataInputStrategy<T> {
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("В JSON только " + root.size() + " записей, требуется " + count, e);
         }
-        SimpleList<T> result = new SimpleArrayList<>(count);
+
         Set<String> allowed = new HashSet<>(factory.fieldNames());
-        for (int i = 0; i < count; i++) {
-            JsonNode node = root.get(i);
-            if (!node.isObject()) {
-                throw new IllegalArgumentException("Запись " + (i + 1) + " должна быть объектом");
-            }
-            var names = node.fieldNames();
-            while (names.hasNext()) {
-                String name = names.next();
-                if (!allowed.contains(name)) {
-                    throw new IllegalArgumentException("Запись " + (i + 1) + ": неизвестное поле " + name);
-                }
-            }
-            Map<String, String> fields = new LinkedHashMap<>();
-            for (String name : factory.fieldNames()) {
-                JsonNode value = node.get(name);
-                if (value == null || value.isNull() || !(value.isTextual() || value.isIntegralNumber())) {
-                    throw new IllegalArgumentException("Запись " + (i + 1) + ": неверный тип или отсутствие поля " + name);
-                }
-                fields.put(name, value.asText());
-            }
-            try {
-                result.add(factory.fromFields(fields));
-            } catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException("Запись " + (i + 1) + ": " + e.getMessage(), e);
+        return IntStream.range(0, count)
+                .mapToObj(i -> parseNode(root.get(i), i+1, allowed))
+                .collect(Collector.of(
+                        ()->new SimpleArrayList<T>(count),
+                        SimpleArrayList::add,
+                        (left, right) ->{
+                            right.forEach(left::add);
+                            return left;
+                        }
+                ));
+    }
+
+    private T parseNode(JsonNode node, int index, Set<String> allowed){
+        if (!node.isObject()) {
+            throw new IllegalArgumentException("Запись " + index  + " должна быть объектом");
+        }
+        var names = node.fieldNames();
+        while (names.hasNext()) {
+            String name = names.next();
+            if (!allowed.contains(name)) {
+                throw new IllegalArgumentException("Запись " + index + ": неизвестное поле " + name);
             }
         }
-        return result;
+        Map<String, String> fields = new LinkedHashMap<>();
+        for (String name : factory.fieldNames()) {
+            JsonNode value = node.get(name);
+            if (value == null || value.isNull() || !(value.isTextual() || value.isIntegralNumber())) {
+                throw new IllegalArgumentException("Запись " + index + ": неверный тип или отсутствие поля " + name);
+            }
+            fields.put(name, value.asText());
+        }
+        try {
+            return factory.fromFields(fields);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Запись " + index + ": " + e.getMessage(), e);
+        }
     }
 }
