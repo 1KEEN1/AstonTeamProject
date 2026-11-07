@@ -30,56 +30,117 @@ public final class Main {
     }
 
     public static void main(String[] args) {
+        printWelcome();
         boolean running = true;
-        while (running) {
-            printMenu();
-            int choice = readIntSafely("Choose an action: ");
-            System.out.println();
 
-            try {
-                switch (choice) {
-                    case 1 -> processSorting(SortField.NAME);
-                    case 2 -> processSorting(SortField.PASSWORD);
-                    case 3 -> processSorting(SortField.MAIL);
-                    case 4 -> processSorting(SortField.AGE);
-                    case 5 -> processEvenAgesSorting();
-                    case 6 -> processOccurrenceCount();
-                    case 0 -> {
-                        running = false;
-                        System.out.println("Shutting down. Goodbye!");
-                    }
-                    default -> System.out.println("Invalid menu item. Please try again.");
+        while (running) {
+            // 1. Request data first
+            SimpleList<User> users = createCollection();
+            if (users == null || users.size() == 0) {
+                System.out.println("Collection is empty. Returning to main menu.");
+                continue;
+            }
+
+            // 2. Display initial collection
+            System.out.println("\n--- Initial Collection ---");
+            printCollection(users);
+
+            // 3. Loop for processing the same data multiple times
+            boolean processingData = true;
+            while (processingData) {
+                boolean processed = processDataMenu(users);
+
+                if (!processed) {
+                    break; // User chose "0. Return to data input (skip)"
                 }
-            } catch (IllegalArgumentException | IllegalStateException e) {
-                System.out.println("Data error: " + e.getMessage());
-            } catch (Exception e) {
-                System.out.println("System error: " + e.getMessage());
+
+                // Ask to continue with the SAME data
+                System.out.println("\n==============================================");
+                System.out.print("Would you like to perform another operation with this data? (y/N): ");
+                String answer = SCANNER.nextLine().trim();
+                if (!answer.equalsIgnoreCase("y")) {
+                    processingData = false;
+                }
+                System.out.println();
+            }
+
+            // 4. Ask whether to input new data or exit
+            System.out.print("Do you want to input a new data set? (y/N): ");
+            String answer = SCANNER.nextLine().trim();
+            if (!answer.equalsIgnoreCase("y")) {
+                running = false;
+                System.out.println("\nShutting down. Goodbye!");
             }
             System.out.println();
         }
     }
 
-    private static void printMenu() {
+    private static void printWelcome() {
         System.out.println("==============================================");
-        System.out.println("          USER SORTING SYSTEM                 ");
+        System.out.println("        WELCOME TO THE SYSTEM!                ");
         System.out.println("==============================================");
+        System.out.println("This program helps you process user data:");
+        System.out.println("sort it or count occurrences.");
+        System.out.println("==============================================\n");
+    }
+
+    private static boolean processDataMenu(SimpleList<User> users) {
+        System.out.println("\n--- What would you like to do with this data? ---");
         System.out.println(" 1. Sort by 'name' (alphabetically)");
         System.out.println(" 2. Sort by 'password'");
         System.out.println(" 3. Sort by 'mail'");
         System.out.println(" 4. Sort by 'age' (ascending)");
         System.out.println(" 5. Extra task: sort even ages only");
         System.out.println(" 6. Count occurrences of a user (multithreaded)");
-        System.out.println(" 0. Exit");
-        System.out.println("==============================================");
+        System.out.println(" 0. Return to data input (skip)");
+        System.out.println("=================================================");
+
+        int choice = readIntSafely("Choose an action: ");
+        System.out.println();
+
+        try {
+            switch (choice) {
+                case 1 -> {
+                    processSorting(users, SortField.NAME);
+                    return true;
+                }
+                case 2 -> {
+                    processSorting(users, SortField.PASSWORD);
+                    return true;
+                }
+                case 3 -> {
+                    processSorting(users, SortField.MAIL);
+                    return true;
+                }
+                case 4 -> {
+                    processSorting(users, SortField.AGE);
+                    return true;
+                }
+                case 5 -> {
+                    processEvenAgesSorting(users);
+                    return true;
+                }
+                case 6 -> {
+                    processOccurrenceCount(users);
+                    return true;
+                }
+                case 0 -> {
+                    return false;
+                }
+                default -> {
+                    System.out.println("Invalid menu item. Please try again.");
+                    return true; // Stay in the processing loop
+                }
+            }
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            System.out.println("Data error: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("System error: " + e.getMessage());
+        }
+        return true;
     }
 
-    private static void processSorting(SortField field) throws IOException {
-        SimpleList<User> users = createCollection();
-        if (users == null || users.size() == 0) return;
-
-        System.out.println("\n--- Initial collection ---");
-        printCollection(users);
-
+    private static void processSorting(SimpleList<User> users, SortField field) throws IOException {
         Comparator<User> comparator = switch (field) {
             case NAME -> Comparator.comparing(User::getName);
             case PASSWORD -> Comparator.comparing(User::getPassword);
@@ -90,35 +151,24 @@ public final class Main {
         SimpleArrayList<User> sortableList = toSimpleArrayList(users);
         QuickSort.sort(sortableList, comparator);
 
-        System.out.println("\n--- After sorting by '" + field.label + "' ---");
+        System.out.println("--- Result of sorting by '" + field.label + "' ---");
         printCollection(sortableList);
 
         offerToSave(sortableList);
     }
 
-    private static void processEvenAgesSorting() throws IOException {
-        SimpleList<User> users = createCollection();
-        if (users == null || users.size() == 0) return;
-
-        System.out.println("\n--- Initial collection ---");
-        printCollection(users);
-
+    private static void processEvenAgesSorting(SimpleList<User> users) throws IOException {
         SimpleArrayList<User> sortableList = toSimpleArrayList(users);
         QuickSort.sortEvenAges(sortableList);
 
-        System.out.println("\n--- After sorting even ages (odd ages stayed in place) ---");
+        System.out.println("--- Result of sorting even ages ---");
+        System.out.println("(Odd ages remained in their original places)");
         printCollection(sortableList);
 
         offerToSave(sortableList);
     }
 
-    private static void processOccurrenceCount() throws Exception {
-        SimpleList<User> users = createCollection();
-        if (users == null || users.size() == 0) return;
-
-        System.out.println("\n--- Generated collection ---");
-        printCollection(users);
-
+    private static void processOccurrenceCount(SimpleList<User> users) throws Exception {
         int targetIndex = readIntSafelyInRange(
                 "\nEnter the index of user N to search (0.." + (users.size() - 1) + "): ",
                 0, users.size() - 1);
@@ -133,26 +183,70 @@ public final class Main {
     }
 
     private static SimpleList<User> createCollection() {
-        System.out.println("\n--- Input setup ---");
-        System.out.println("1. Generate randomly");
-        System.out.println("2. Enter manually");
-        System.out.println("3. Load from JSON file");
-        System.out.println("0. Cancel");
+        DataInputStrategy<User> strategy = null;
 
-        int choice = readIntSafely("Choose input method: ");
-        if (choice == 0) return null;
+        while (strategy == null) {
+            System.out.println("\n--- Input Setup ---");
+            System.out.println("1. Generate randomly");
+            System.out.println("2. Enter manually");
+            System.out.println("3. Load from JSON file");
+            System.out.println("0. Exit the program");
+            System.out.println("==============================");
 
-        DataInputStrategy<User> strategy = switch (choice) {
-            case 1 -> new RandomInputStrategy<>(FACTORY);
-            case 2 -> new ManualInputStrategy<>(SCANNER, FACTORY);
-            case 3 -> {
-                System.out.print("Enter path to JSON file (e.g. users.json): ");
-                String path = SCANNER.nextLine().trim();
-                if (path.isEmpty()) throw new IllegalArgumentException("Path must not be empty");
-                yield new JsonInputStrategy<>(Path.of(path), FACTORY);
+            int choice = readIntSafely("Choose input method: ");
+
+            if (choice == 0) {
+                System.out.println("Shutting down. Goodbye!");
+                System.exit(0);
             }
-            default -> throw new IllegalArgumentException("Invalid input method");
-        };
+
+            switch (choice) {
+                case 1 -> strategy = new RandomInputStrategy<>(FACTORY);
+                case 2 -> strategy = new ManualInputStrategy<>(SCANNER, FACTORY);
+                case 3 -> {
+                    while (true) {
+                        System.out.print("Enter path to JSON file (e.g. users.json), or type '0' to go back: ");
+                        String pathStr = SCANNER.nextLine().trim();
+
+                        if (pathStr.equals("0")) {
+                            System.out.println("Input cancelled. Returning to main menu.");
+                            return null;
+                        }
+
+                        if (pathStr.isEmpty()) {
+                            System.out.println("Error: path must not be empty. Please try again.");
+                            continue;
+                        }
+
+                        Path path = Path.of(pathStr);
+                        if (!path.toFile().exists()) {
+                            System.out.println("Error: file not found at '" + pathStr + "'. Please try again.");
+                            continue;
+                        }
+
+                        if (path.toFile().isDirectory()) {
+                            System.out.println("Error: '" + pathStr + "' is a directory, not a file. Please provide a path to a JSON file.");
+                            continue;
+                        }
+
+                        if (!path.toFile().canRead()) {
+                            System.out.println("Error: file at '" + pathStr + "' is not readable. Please try again.");
+                            continue;
+                        }
+
+                        try {
+                            strategy = new JsonInputStrategy<>(path, FACTORY);
+                        } catch (Exception e) {
+                            System.out.println("Error: failed to load JSON file '" + pathStr + "': " + e.getMessage());
+                            System.out.println("Please try another file.");
+                            continue;
+                        }
+                        break;
+                    }
+                }
+                default -> System.out.println("Invalid input method. Please try again.");
+            }
+        }
 
         int count = readIntSafely("How many elements to input? ");
         InputValidator.nonNegativeCount(count);
@@ -178,22 +272,52 @@ public final class Main {
     private static void offerToSave(SimpleList<User> users) throws IOException {
         System.out.print("\nSave result to file? (y/N): ");
         String answer = SCANNER.nextLine().trim();
-        if (!answer.equalsIgnoreCase("y")) return;
-
-        System.out.print("Enter file path (e.g. result.txt): ");
-        String pathStr = SCANNER.nextLine().trim();
-        if (pathStr.isEmpty()) {
-            System.out.println("Empty path — save cancelled.");
+        if (!answer.equalsIgnoreCase("y")) {
+            System.out.println("Save cancelled.");
             return;
         }
 
-        List<User> plainList = new ArrayList<>();
-        for (User u : users) {
-            plainList.add(u);
-        }
+        while (true) {
+            System.out.print("Enter file path (e.g. result.txt), or type '0' to cancel: ");
+            String pathStr = SCANNER.nextLine().trim();
 
-        WRITER.append(Path.of(pathStr), plainList, User::toString);
-        System.out.println("Data successfully appended to file: " + pathStr);
+            if (pathStr.equals("0")) {
+                System.out.println("Save cancelled.");
+                return;
+            }
+
+            if (pathStr.isEmpty()) {
+                System.out.println("Error: path must not be empty. Please try again.");
+                continue;
+            }
+
+            Path path = Path.of(pathStr);
+
+            if (path.toFile().isDirectory()) {
+                System.out.println("Error: '" + pathStr + "' is a directory, not a file. Please provide a path to a file (e.g. result.txt).");
+                continue;
+            }
+
+            Path parent = path.toAbsolutePath().getParent();
+            if (parent != null && !parent.toFile().exists()) {
+                System.out.println("Error: directory '" + parent + "' does not exist. Please provide a valid path.");
+                continue;
+            }
+
+            List<User> plainList = new ArrayList<>();
+            for (User u : users) {
+                plainList.add(u);
+            }
+
+            try {
+                WRITER.append(path, plainList, User::toString);
+                System.out.println("Data successfully appended to file: " + pathStr);
+                return;
+            } catch (IOException e) {
+                System.out.println("Error: failed to write to '" + pathStr + "': " + e.getMessage());
+                System.out.println("Please try another path.");
+            }
+        }
     }
 
     private static int readIntSafely(String prompt) {
