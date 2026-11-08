@@ -9,40 +9,6 @@ import java.util.Comparator;
  * Ручная реализация алгоритма быстрой сортировки (Quicksort) для коллекции SimpleArrayList.
  */
 
-/**
- * В Main можно запустить например так
- * 1. Сортировка по полю 'name' (по алфавиту)
- * SimpleArrayList<User> users = createInitialList();
- * QuickSort.sort(users, (u1, u2) -> u1.getName().compareTo(u2.getName()));
- * <p>
- * 2. Сортировка по полю 'password'
- * users = createInitialList();
- * QuickSort.sort(users, (u1, u2) -> u1.getPassword().compareTo(u2.getPassword()));
- * <p>
- * 3. Сортировка по полю 'mail'
- * users = createInitialList();
- * QuickSort.sort(users, (u1, u2) -> u1.getMail().compareTo(u2.getMail()));
- * <p>
- * 4. Сортировка по полю 'age' (все элементы по возрастанию)
- * users = createInitialList();
- * QuickSort.sort(users, (u1, u2) -> Integer.compare(u1.getAge(), u2.getAge()));
- * <p>
- * 5. Выполнение дополнительного задания (только четные по возрастанию, нечетные на месте)
- * users = createInitialList();
- * QuickSort.sortEvenAges(users);
- * <p>
- * private static SimpleArrayList<User> createInitialList() {
- * SimpleArrayList<User> list = new SimpleArrayList<>(10);
- * <p>
- * list.add(User.builder().name("Denis").password("qwerty").mail("denis@mail.com").age(12).build());
- * list.add(User.builder().name("Anna").password("abc123").mail("anna@mail.com").age(25).build());
- * list.add(User.builder().name("Clara").password("passClara").mail("clara@net.ru").age(8).build());
- * list.add(User.builder().name("Boris").password("123456").mail("boris@yandex.ru").age(31).build());
- * list.add(User.builder().name("Alex").password("adminPass").mail("alex@google.com").age(2).build());
- * <p>
- * return list; }
- */
-
 // Утилитный класс
 public final class QuickSort {
 
@@ -159,47 +125,96 @@ public final class QuickSort {
         if (list == null || list.size() < 2) {
             return;
         }
+        quickSortEven(list, 0, list.size() - 1);
+    }
 
-        // Объявляем счетчик для определения точного количества пользователей с четным возрастом
-        int evenCount = 0;
-        // Запускаем цикл по всей исходной коллекции для подсчета четных элементов
-        for (int i = 0; i < list.size(); i++) {
-            // Побитовое И (& 1) проверяет младший бит числа: если результат 0, то возраст четный
-            if ((list.get(i).getAge() & 1) == 0) {
-                evenCount++;
+    /**
+     * Специализированный Quicksort для четных возрастов
+     */
+
+    private static void quickSortEven(SimpleArrayList<User> list, int low, int high) {
+        // Выполняем цикл, пока левый указатель диапазона строго меньше правого.
+        while (low < high) {
+            // Сдвигаем левую границу, если элемент нечетный
+            if ((list.get(low).getAge() & 1) != 0) {
+                low++; // Сдвигаем левую границу вправо (пропускаем этот элемент, он остается на месте).
+                continue;
+            }
+            // Сдвигаем правую границу, если элемент нечетный
+            if ((list.get(high).getAge() & 1) != 0) {
+                high--; // Сдвигаем правую границу влево (пропускаем этот элемент).
+                continue;
+            }
+
+            // Вызываем кастомное разделение Хоара для текущего диапазона и получаем индекс разделения.
+            int pivotIndex = partitionEven(list, low, high);
+
+            // Проверяем, какая из получившихся подчастей меньше по размеру.
+            if (pivotIndex - low < high - pivotIndex) {
+                // Если левая часть меньше, рекурсивно сортируем её.
+                quickSortEven(list, low, pivotIndex);
+                // А большую (правую) часть оставляем для обработки итеративно в цикле while, смещая low.
+                low = pivotIndex + 1;
+            } else {
+                // Если правая часть меньше, рекурсивно сортируем её.
+                quickSortEven(list, pivotIndex + 1, high);
+                // А левую часть оставляем для обработки в цикле, смещая high.
+                high = pivotIndex;
+            }
+        }
+    }
+
+    /**
+     * Разбиение Хоара, пропуск нечетных возрастов
+     */
+
+    private static int partitionEven(SimpleArrayList<User> list, int low, int high) {
+        // Находим корректный опорный элемент (он обязательно должен быть четным)
+        // Ищем его, начиная с середины отрезка
+        int mid = low + (high - low) / 2;
+        // Пока индекс в пределах диапазона и элемент на этой позиции нечетный
+        while (mid <= high && (list.get(mid).getAge() & 1) != 0) {
+            mid++; // Двигаемся вправо в поисках четного элемента для pivot.
+        }
+        // Если в правой части не нашли четный опорный, ищем в левой
+        if (mid > high) {
+            mid = low + (high - low) / 2;  // Возвращаемся на середину.
+            // И теперь идем влево в поисках четного элемента.
+            while (mid >= low && (list.get(mid).getAge() & 1) != 0) {
+                mid--; // Двигаемся влево.
             }
         }
 
-        // Если четных элементов нет или он всего один, то сортировать нечего — выходим
-        if (evenCount < 2) {
-            return;
-        }
+        // Сохраняем найденный четный элемент в качестве опорного (pivot).
+        User pivot = list.get(mid);
+        int i = low - 1;
+        int j = high + 1;
 
-        // Создаем временный список под четные элементы, выделяя память ровно под подсчитанное количество
-        SimpleArrayList<User> evens = new SimpleArrayList<>(evenCount);
-        // Запускаем цикл для копирования подходящих пользователей во временный список
-        for (int i = 0; i < list.size(); i++) {
-            // Получаем объект пользователя по текущему индексу i
-            User user = list.get(i);
-            // Проверяем возраст пользователя на четность с помощью побитовой операции
-            if ((user.getAge() & 1) == 0) {
-                evens.add(user); // Если четный — добавляем объект пользователя во временную коллекцию evens
+        while (true) {
+            // Ищем левый четный элемент, который >= pivot
+            do {
+                i++;
+                // Повторяем шаг, пока выполняются два условия:
+                // Мы не вышли за границы диапазона (i <= high) и
+                // если элемент нечетный его нужно пропустить или
+                // он меньше опорного он стоит на своем месте
+            } while (i <= high && ((list.get(i).getAge() & 1) != 0 || list.get(i).getAge() < pivot.getAge()));
+
+            // Ищем правый четный элемент, который <= pivot
+            do {
+                j--;
+                // Повторяем шаг, пока выполняются два условия:
+                // Мы не вышли за границы диапазона (j >= low) и
+                // если элемент нечетный его нужно пропустить или
+                // он больше опорного он стоит на своем месте
+            } while (j >= low && ((list.get(j).getAge() & 1) != 0 || list.get(j).getAge() > pivot.getAge()));
+
+            // Если указатели встретились или пересеклись — разделение окончено.
+            if (i >= j) {
+                return j;
             }
-        }
 
-        // Вызываем базовый метод sort нашего класса для сортировки только собранных четных элементов
-        // Вторым аргументом передаем лямбда-выражение, которое сравнивает примитивные возраста (int)
-        sort(evens, (u1, u2) -> Integer.compare(u1.getAge(), u2.getAge()));
-
-        // Объявляем указатель-индекс для последовательного извлечения элементов из отсортированного списка evens
-        int evenIdx = 0;
-        // Запускаем финальный цикл по исходной коллекции для вставки отсортированных значений назад
-        for (int i = 0; i < list.size(); i++) {
-            // Снова находим позиции, где изначально стояли элементы с четным возрастом
-            if ((list.get(i).getAge() & 1) == 0) {
-                // Перезаписываем элемент в исходном списке отсортированным значением и инкрементируем evenIdx
-                list.set(i, evens.get(evenIdx++));
-            }
+            swap(list, i, j);
         }
     }
 }
