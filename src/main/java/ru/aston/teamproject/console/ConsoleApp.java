@@ -18,6 +18,10 @@ public final class ConsoleApp {
     private final DataOperationsMenu operationsMenu;
 
     public ConsoleApp() {
+        this(new Scanner(System.in));
+    }
+
+    ConsoleApp(Scanner scanner) {
         this.scanner = new Scanner(System.in);
         this.io = new ConsoleIO(scanner);
         this.menuPrinter = new MenuPrinter();
