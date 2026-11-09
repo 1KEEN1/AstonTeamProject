@@ -63,7 +63,7 @@ public class InputValidatorTest {
     void whenValueIsZero_thenThrowsIllegalArgumentException() {
         assertThatThrownBy(() -> InputValidator.positiveInt("0", "age"))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("больше нуля");
+                .hasMessageContaining("more than 0");
     }
 
     @Test
@@ -71,7 +71,7 @@ public class InputValidatorTest {
     void whenValueIsNegative_thenThrowsIllegalArgumentException() {
         assertThatThrownBy(() -> InputValidator.positiveInt("-1", "age"))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("больше нуля");
+                .hasMessageContaining("more than 0");
     }
 
     @Test
@@ -79,7 +79,7 @@ public class InputValidatorTest {
     void whenValueIsNotNumber_thenThrowsIllegalArgumentExceptionWithCause() {
         assertThatThrownBy(() -> InputValidator.positiveInt("abc", "age"))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("целым числом")
+                .hasMessageContaining("integer")
                 .hasCauseInstanceOf(NumberFormatException.class);
     }
 
@@ -88,7 +88,7 @@ public class InputValidatorTest {
     void whenValueIsDecimal_thenThrowsIllegalArgumentException() {
         assertThatThrownBy(() -> InputValidator.positiveInt("1.5", "age"))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("целым числом");
+                .hasMessageContaining("integer");
     }
 
     @Test
@@ -96,7 +96,7 @@ public class InputValidatorTest {
     void whenValueOverflowsInt_thenThrowsIllegalArgumentException() {
         assertThatThrownBy(() -> InputValidator.positiveInt("2147483648", "age"))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("целым числом");
+                .hasMessageContaining("integer");
     }
 
     @Test
@@ -122,7 +122,7 @@ public class InputValidatorTest {
     void whenCountIsNegative_thenThrowsIllegalArgumentException(int count) {
         assertThatThrownBy(() -> InputValidator.nonNegativeCount(count))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("отрицательным");
+                .hasMessageContaining("negative");
     }
 
     // validateAvailableSpace
@@ -160,7 +160,7 @@ public class InputValidatorTest {
     void whenAvailableIsNegative_thenThrowsIllegalStateException() {
         assertThatThrownBy(() -> InputValidator.validateAvailableSpace(5, -1))
                 .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("свободных мест");
+                .hasMessageContaining("available spots");
     }
 
     @Test
@@ -168,7 +168,7 @@ public class InputValidatorTest {
     void whenRequestedExceedsAvailable_thenThrowsIllegalArgumentException() {
         assertThatThrownBy(() -> InputValidator.validateAvailableSpace(11, 10))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Недостаточно места")
-                .hasMessageContaining("Свободно: 10");
+                .hasMessageContaining("Not enough space")
+                .hasMessageContaining("Available: 10");
     }
 }

@@ -2,10 +2,10 @@ package ru.aston.teamproject.factory;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import ru.aston.teamproject.User;
 import ru.aston.teamproject.collection.SimpleList;
 import ru.aston.teamproject.input.DataInputStrategy;
 import ru.aston.teamproject.input.RandomInputStrategy;
+import ru.aston.teamproject.user.User;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;

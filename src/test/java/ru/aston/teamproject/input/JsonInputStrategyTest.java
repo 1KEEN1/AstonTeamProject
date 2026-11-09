@@ -114,7 +114,7 @@ public class JsonInputStrategyTest {
 
         assertThatThrownBy(() -> strategy.read(1))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Не удалось прочитать JSON");
+                .hasMessageContaining("Failed to read JSON");
 
     }
 
@@ -127,7 +127,7 @@ public class JsonInputStrategyTest {
 
         assertThatThrownBy(() -> strategy.read(1))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Не удалось прочитать JSON")
+                .hasMessageContaining("Failed to read JSON")
                 .hasCauseInstanceOf(IOException.class);
     }
 
@@ -141,7 +141,7 @@ public class JsonInputStrategyTest {
 
         assertThatThrownBy(() -> strategy.read(1))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Корень JSON должен быть массивом");
+                .hasMessageContaining("The JSON root must be an array of objects");
     }
 
     @Test
@@ -153,7 +153,7 @@ public class JsonInputStrategyTest {
 
         assertThatThrownBy(() -> strategy.read(1))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Корень JSON должен быть массивом");
+                .hasMessageContaining("The JSON root must be an array of objects");
     }
 
     //Размер
@@ -165,7 +165,7 @@ public class JsonInputStrategyTest {
 
         assertThatThrownBy(()-> strategy.read(2))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("В JSON только 1 записей, требуется 2");
+                .hasMessageContaining("In JSON only 1 records, required 2");
     }
 
     //Поля
@@ -228,7 +228,7 @@ public class JsonInputStrategyTest {
 
         assertThatThrownBy(() -> strategy.read(1))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Запись 1")
+                .hasMessageContaining("Record 1")
                 .hasMessageContaining("bad user")
                 .hasCauseInstanceOf(IllegalArgumentException.class);
     }

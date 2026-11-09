@@ -144,6 +144,6 @@ public class ManualInputStrategyTest {
 
         assertThatThrownBy(() -> strategy.read(1))
                 .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("Поток ввода завершён");
+                .hasMessageContaining("Input stream completed");
     }
 }
