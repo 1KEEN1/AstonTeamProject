@@ -20,7 +20,7 @@ public class RandomInputStrategy<T> implements DataInputStrategy<T> {
         SimpleList<T> result = new SimpleArrayList<>(count);
         Stream.generate(factory::random)
                 .limit(count)
-                .map(item -> Objects.requireNonNull(item, "Фабрика вернула null"))
+                .map(item -> Objects.requireNonNull(item, "The factory returned null"))
                 .forEach(result::add);
         return result;
     }

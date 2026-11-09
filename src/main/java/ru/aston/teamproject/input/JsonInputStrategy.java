@@ -33,15 +33,15 @@ public class JsonInputStrategy<T> implements DataInputStrategy<T> {
         try {
             root = mapper.readTree(file.toFile());
         } catch (IOException e) {
-            throw new IllegalArgumentException("Не удалось прочитать JSON: " + file, e);
+            throw new IllegalArgumentException("Failed to read JSON: " + file, e);
         }
         if (root == null || !root.isArray()) {
-            throw new IllegalArgumentException("Корень JSON должен быть массивом объектов");
+            throw new IllegalArgumentException("The JSON root must be an array of objects");
         }
         try {
             InputValidator.validateAvailableSpace(count, root.size());
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("В JSON только " + root.size() + " записей, требуется " + count, e);
+            throw new IllegalArgumentException("In JSON only " + root.size() + " records, required " + count, e);
         }
 
         Set<String> allowed = new HashSet<>(factory.fieldNames());
@@ -59,27 +59,27 @@ public class JsonInputStrategy<T> implements DataInputStrategy<T> {
 
     private T parseNode(JsonNode node, int index, Set<String> allowed){
         if (!node.isObject()) {
-            throw new IllegalArgumentException("Запись " + index  + " должна быть объектом");
+            throw new IllegalArgumentException("Record " + index  + " must be an object");
         }
         var names = node.fieldNames();
         while (names.hasNext()) {
             String name = names.next();
             if (!allowed.contains(name)) {
-                throw new IllegalArgumentException("Запись " + index + ": неизвестное поле " + name);
+                throw new IllegalArgumentException("Record " + index + ": unknown field " + name);
             }
         }
         Map<String, String> fields = new LinkedHashMap<>();
         for (String name : factory.fieldNames()) {
             JsonNode value = node.get(name);
             if (value == null || value.isNull() || !(value.isTextual() || value.isIntegralNumber())) {
-                throw new IllegalArgumentException("Запись " + index + ": неверный тип или отсутствие поля " + name);
+                throw new IllegalArgumentException("Record " + index + ": invalid type or missing field " + name);
             }
             fields.put(name, value.asText());
         }
         try {
             return factory.fromFields(fields);
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Запись " + index + ": " + e.getMessage(), e);
+            throw new IllegalArgumentException("Record " + index + ": " + e.getMessage(), e);
         }
     }
 }

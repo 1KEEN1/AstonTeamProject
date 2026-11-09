@@ -28,10 +28,10 @@ public class UserDataFactory implements DataFactory<User> {
         String mail = InputValidator.nonBlank(fields.get(MAIL), MAIL);
         int age = InputValidator.positiveInt(fields.get(AGE), AGE);
         if (!EMAIL.matcher(mail).matches()) {
-            throw new IllegalArgumentException("Некорректный адрес электронной почты");
+            throw new IllegalArgumentException("Invalid email address");
         }
         if (age > MAX_AGE) {
-            throw new IllegalArgumentException("Возраст не может превышать " + MAX_AGE);
+            throw new IllegalArgumentException("Age cannot exceed " + MAX_AGE);
         }
         return User.builder().name(name).password(password).mail(mail).age(age).build();
     }

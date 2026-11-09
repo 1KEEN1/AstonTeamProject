@@ -33,15 +33,15 @@ public final class OccurrenceCounter {
      */
     public static int countByUser(SimpleList<User> users, User target, int threads) throws InterruptedException, ExecutionException {
 
-        Objects.requireNonNull(users, "Коллекция users не может быть null");
-        Objects.requireNonNull(target, "Объект target не может быть null");
+        Objects.requireNonNull(users, "The users collection cannot be null");
+        Objects.requireNonNull(target, "The target object cannot be null");
         if (threads <= 0) {
-            throw new IllegalArgumentException("Количество потоков должно быть больше нуля, получено: " + threads);
+            throw new IllegalArgumentException("The number of threads must be greater than zero, received: " + threads);
         }
 
         final int size = users.size();
         if (size == 0) {
-            System.out.println("Количество вхождений: 0 (коллекция пуста)");
+            System.out.println("Number of occurrences: 0 (collection is empty)");
             return 0;
         }
 
@@ -73,14 +73,14 @@ public final class OccurrenceCounter {
                 total += f.get();   // задачи конечные, без таймаута
             }
 
-            System.out.printf("Количество вхождений пользователя %s: %d (потоков: %d, элементов: %d)%n", target.getName(), total, workerCount, size);
+            System.out.printf("Number of occurrences for user %s: %d (threads: %d, elements: %d)%n", target.getName(), total, workerCount, size);
             return total;
 
         } finally {
             executor.shutdownNow();
             try {
                 if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
-                    System.err.println("Пул потоков не завершился за 5 секунд");
+                    System.err.println("The thread pool did not finish within 5 seconds");
                 }
             } catch (InterruptedException ie) {
                 Thread.currentThread().interrupt();
