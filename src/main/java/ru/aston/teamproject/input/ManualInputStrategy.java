@@ -40,19 +40,19 @@ public class ManualInputStrategy<T> implements DataInputStrategy<T> {
     private T readVal(int index, int count) {
         while (true) {
             Map<String, String> fields = new LinkedHashMap<>();
-            System.out.println("Ввод объекта " + index + " из " + count);
+            System.out.println("Input object " + index + " from " + count);
             for (String field : factory.fieldNames()) {
                 System.out.print(field + ": ");
                 try {
                     fields.put(field, scanner.nextLine());
                 } catch (NoSuchElementException e) {
-                    throw new IllegalStateException("Поток ввода завершён до заполнения коллекции", e);
+                    throw new IllegalStateException("Input stream completed before the collection was filled", e);
                 }
             }
             try {
                 return (factory.fromFields(fields));
             } catch (IllegalArgumentException e) {
-                System.out.println("Ошибка: " + e.getMessage() + ". Повторите ввод объекта.");
+                System.out.println("Error: " + e.getMessage() + ". Re-enter the object.");
             }
         }
     }

@@ -6,7 +6,7 @@ public final class InputValidator {
 
     public static String nonBlank(String value, String field) {
         if (value == null || value.isBlank()) {
-            throw new IllegalArgumentException("Поле '" + field + "' не может быть пустым");
+            throw new IllegalArgumentException("Field '" + field + "' can't be empty");
         }
         return value.trim();
     }
@@ -16,17 +16,17 @@ public final class InputValidator {
         try {
             int number = Integer.parseInt(text);
             if (number <= 0) {
-                throw new IllegalArgumentException("Поле '" + field + "' должно быть больше нуля");
+                throw new IllegalArgumentException("Field '" + field + "' need to be more than 0");
             }
             return number;
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Поле '" + field + "' должно быть целым числом", e);
+            throw new IllegalArgumentException("Field '" + field + "' must be an integer", e);
         }
     }
 
     public static void nonNegativeCount(int count) {
         if (count < 0) {
-            throw new IllegalArgumentException("Количество элементов не может быть отрицательным");
+            throw new IllegalArgumentException("The number of elements cannot be negative");
         }
     }
 
@@ -36,13 +36,13 @@ public final class InputValidator {
 
         if (availableSpace < 0) {
             throw new IllegalStateException(
-                    "Некорректное количество свободных мест"
+                    "Incorrect number of available spots"
             );
         }
 
         if (requestedCount > availableSpace) {
             throw new IllegalArgumentException(
-                    "Недостаточно места. Свободно: "
+                    "Not enough space. Available: "
                             + availableSpace
             );
         }
